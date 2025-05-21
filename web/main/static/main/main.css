@@ -1,0 +1,19 @@
+body, html {
+    margin: 0;
+    padding: 0;
+}
+
+body{
+    min-height: 100vh;
+    min-width: 100vh;
+}
+
+main, body{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+td {
+    border: 1px solid black;
+}

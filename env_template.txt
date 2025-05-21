@@ -1,0 +1,27 @@
+PROJECT_NAME="plain text"
+
+DJANGO_SECRET="encrypted"
+
+GH_USER="plain text"
+GH_TOKEN="encrypted"
+
+CONTAINER_PORT="plain text"
+DB_INITIAL_PASSWORD="plain text"
+DB_USER="plain text"
+DB_PASSWORD="encrypted"
+DB_NAME="plain text"
+DB_HOST="plain text"
+DB_PORT="plain text"
+
+EMAIL_HOST=""
+EMAIL_PORT=""
+EMAIL_HOST_USER=""
+EMAIL_HOST_PASSWORD="encrypted"
+
+FIRST_KEY="plain text"
+SECOND_KEY="encrypted"
+
+EMAIL_SERVER="encrypted"
+EMAIL_PORT="encrypted"
+EMAIL_USER="encrypted"
+EMAIL_PASSWORD="encrypted"

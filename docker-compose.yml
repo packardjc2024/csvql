@@ -1,0 +1,15 @@
+services:
+  web:
+    build: ./web
+    container_name: ${PROJECT_NAME}_web
+    ports:
+      - "${CONTAINER_PORT}:${CONTAINER_PORT}"
+    volumes:
+      - ./web:/app
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+      - logs_volume:/app/logs
+volumes:
+  static_volume:
+  media_volume:
+  logs_volume:

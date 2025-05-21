@@ -1,0 +1,4 @@
+.gitignore
+deploy.sh
+env_template.txt
+update.sh

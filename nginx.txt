@@ -1,0 +1,28 @@
+# /etc/nginx/sites-available/csvql
+
+########################################################
+# Before Obtaining Certificate
+########################################################
+
+server {
+
+	server_name csvql.programmingondemand.com;
+
+	location /static/ {
+		alias /var/lib/docker/volumes/docker_test_static_volume/_data/;
+	}
+
+    location /media/ {
+		alias /var/lib/docker/volumes/docker_test_media_volume/_data/;
+	}
+
+	location / {
+		proxy_pass http://127.0.0.1:8004;
+		proxy_http_version 1.1;
+		proxy_set_header Host $host;
+       		proxy_set_header X-Real-IP $remote_addr;
+       		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+       		proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+}

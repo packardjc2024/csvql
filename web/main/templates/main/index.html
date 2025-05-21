@@ -1,0 +1,65 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Portfolio</title>
+    <!-- Favicon -->
+    <!-- <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicon/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon/favicon-16x16.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon/android-chrome-192x192.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon/android-chrome-512x512.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon/favicon.ico' %}">
+    <link rel="manifest" href="{% static 'favicon/site.webmanifest' %}"> -->
+    <!-- CSS and JS Files -->
+    <link rel="stylesheet" type=text/css href="{% static 'bootstrap.min.css' %}">
+    <script type="text/javascript" href="{% static 'bootstrap.js' %}"></script>
+    <script type="text/javascript" src="{% static 'jquery.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href='{% static "main/main.css" %}'>
+    <script type="text/javascript" src="{% static 'main/main.js' %}"></script>
+</head>
+
+<body>
+
+<header>
+</header>
+
+<main>
+
+
+<div class="table_container">
+    <form>
+    {% csrf_token %}
+        <table class="spreadsheet">
+            <tr>
+                <td class="table-header">ID</td>
+                {% for column in columns %}
+                <td>
+                    <input type="text" id="{{ column }}" value="{{ column }}" class="field table-header">
+                </td>
+                {% endfor %}
+            </tr>
+            {% for row in rows %}
+            <tr id="{{ row }}" class="table-row">
+                <td>{{ row }}</td>
+                {% for column in columns %}
+                <td>
+                    <input type="text" name="{{ column }}" class="field table-body">
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>   
+    </form>
+</div>
+
+
+
+</main>
+
+<footer>
+</footer>
+
+</body>
+</html>
