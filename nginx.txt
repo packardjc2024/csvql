@@ -6,14 +6,14 @@
 
 server {
 
-	server_name csvql.programmingondemand.com;
+	server_name csvql.programmingondemand.com www.csvql.programmingondemand.com;
 
 	location /static/ {
-		alias /var/lib/docker/volumes/docker_test_static_volume/_data/;
+		alias /var/lib/docker/volumes/csvql_static_volume/_data/;
 	}
 
     location /media/ {
-		alias /var/lib/docker/volumes/docker_test_media_volume/_data/;
+		alias /var/lib/docker/volumes/csvql_media_volume/_data/;
 	}
 
 	location / {

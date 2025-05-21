@@ -46,7 +46,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = decrypt_string(encrypted_string=os.getenv('DJANGO_SECRET'), password=DECRYPTION_KEY)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 USE_SRI = True
 SRI_ENABLED = True
