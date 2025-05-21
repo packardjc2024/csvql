@@ -9,7 +9,7 @@ services:
       - static_volume:/app/staticfiles
       - media_volume:/app/media
       - logs_volume:/app/logs
-      - dbs_volume: /app/temp_dbs
+      - dbs_volume:/app/temp_dbs
 volumes:
   static_volume:
   media_volume:
