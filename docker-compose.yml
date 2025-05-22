@@ -1,17 +1,44 @@
 services:
+  db:
+    build: ./db
+    container_name: ${PROJECT_NAME}_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_INITIAL_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_PORT=5432
+    networks:
+      csvql_network:
+        ipv4_address: 172.37.0.2
   web:
     build: ./web
     container_name: ${PROJECT_NAME}_web
     ports:
       - "${CONTAINER_PORT}:${CONTAINER_PORT}"
+    depends_on:
+      - db
     volumes:
       - ./web:/app
       - static_volume:/app/staticfiles
       - media_volume:/app/media
       - logs_volume:/app/logs
-      - dbs_volume:/app/temp_dbs
+      - dbs:/app/temp_dbs
+    networks:
+      csvql_network:
+        ipv4_address: 172.37.0.3
+
 volumes:
+  postgres_data:
   static_volume:
   media_volume:
   logs_volume:
-  dbs_volume:
+  dbs:
+
+networks:
+  csvql_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.37.0.0/16
