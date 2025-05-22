@@ -1,0 +1,22 @@
+{% extends 'account/index.html' %}
+{% load static %}
+
+{% block main_extension %}
+
+
+<form class="form-signin" method="POST" action="{% url 'account:login_page' %}">
+    {% csrf_token %}
+    <img class="mb-1" src="{% static 'site_pictures/pod_logo.png' %}" alt="" width="200" height="200">
+    <h1 class="h3 mb-3 font-weight-normal">Log In</h1>
+    <input type="text" id="username" name="username" class="form-control" placeholder="Username..." required autofocus>
+    <input type="password" id="Password" name="password" class="form-control" placeholder="Password..." required>
+    {% if disabled %}
+    <button class="btn btn-md btn-primary btn-block" type="submit" disabled>Log In</button>
+    {% else %}
+    <button class="btn btn-md btn-primary btn-block" type="submit">Log In</button>
+    {% endif %}
+    <br>
+    <p> {{ message }}</p>
+</form>
+
+{% endblock %}

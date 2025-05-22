@@ -6,6 +6,7 @@ from django.conf import settings
 import subprocess
 import os
 import re
+import codecs
 
 
 INVALID_MESSAGE = 'Invalid characters in table name. Table names can only consists of letters, numbers and underscores'
@@ -18,6 +19,9 @@ def generate_db_path(filename):
 
 
 def check_for_db(filename):
+    """
+    Checks if database exists using filename without extension.
+    """
     return True if os.path.exists(generate_db_path(filename)) else False
 
 
@@ -43,9 +47,20 @@ def connect_to_db(filename):
         return f'{filename} does not exist.'
     else:
         connection = sqlite3.connect(generate_db_path(filename))
+        connection.row_factory = return_dict
         cursor = connection.cursor()
         return connection, cursor
     
+
+def return_dict(cursor, row):
+    """
+    Converts the sqlite result from a tuple of values to a dictionary
+    """
+    row_dict = {}
+    for index, column in enumerate(cursor.description):
+        row_dict[column[0]] = row[index]
+    return row_dict
+
 
 def execute_query(filename, query, params=None):
     """
@@ -161,64 +176,57 @@ def update_row_value(filename, table_name, column, row_id, value):
     return results, message
 
 
-def convert_csv(file_object, filename: str, username: str):
-    # Read the file
-    file_text = io.StringIO(file_object.read().decode('utf-8'))
-    csv_object = csv.DictReader(file_text)
-    rows = [line for line in csv_object]
-    columns = csv_object.fieldnames
-
-    # format the data
-    table_name = filename.strip().lower().replace('.csv', '').replace(' ', '_')
-    columns_list = [f'{column.strip().lower().replace(' ', '_').replace(',', '')} text' for column in columns]
-    columns_string = ', '.join(columns_list)
-    rows_list = [', '.join(row.values()) for row in rows]
-    rows_string = '), '.join(rows_list)
-
-    # Create temporary sqlite file
-    db_path = Path.joinpath(Path(settings.BASE_DIR), 'temp_dbs', f'{username}.db')
-    delete_db(username)
-    connection = sqlite3.connect(db_path)
-    cursor = connection.cursor()
-    cursor.execute(f'DROP TABLE IF EXISTS {table_name};')
-    cursor.execute(f'CREATE TABLE IF NOT EXISTS {table_name} ({columns_string});')
-    for row in rows:
-        paramaters = ['?'] * len(rows[0].values())
-        cursor.execute(f'INSERT INTO {table_name} VALUES({', '.join(paramaters)});', (list(row.values())))
-    connection.commit()
-    return table_name
-
-
-def query_db(query, username, session_table):
-    """
-    """
-    try:
-        table_name = re.search(r'from\s+(\w+)', query, re.IGNORECASE).group(1)
-    except:
-        table_name = session_table
-    db_path = Path.joinpath(Path(settings.BASE_DIR), 'temp_dbs', f'{username}.db')
-    try:
-        connection = sqlite3.connect(db_path)
-        cursor = connection.cursor()
-        cursor.execute(query)
-        connection.commit()
-        rows = cursor.fetchall()
-        columns = [column[0] for column in cursor.description]
-        message = f'SUCCESS: {len(rows)} rows returned.'
-        return rows, columns, table_name, message
-    except sqlite3.Error as error:
-        return None, None, None, f'SQL ERROR: {error}.'
-
-
 def delete_db(username):
     """
     """
-    db_path = Path.joinpath(Path(settings.BASE_DIR), 'temp_dbs', f'{username}.db')
+    db_path = generate_db_path(username)
     if os.path.exists(db_path):
-        subprocess.run(['rm', str(db_path)])
-        # logger.info('Users temp_db deleted')
+        subprocess.run(['rm', db_path])
+
+
+def convert_csv(file_object, username):
+    # Read the file
+    filename = file_object.name
+    # Check for coding type
+    raw_data = file_object.read()
+    if raw_data.startswith(codecs.BOM_UTF8):
+        encoding = 'utf-8-sig'
     else:
-        # logger.info('no user db existed')
-        pass
+        encoding = 'utf-8'
+    # Reset reader
+    file_object.seek(0)
+    file_text = io.StringIO(file_object.read().decode(encoding))
+    csv_object = csv.DictReader(file_text)
+    unedited_rows = [line for line in csv_object]
+    # unedited_columns = csv_object.fieldnames
 
+    # Clean up columns
+    replace_with_none = ['"', "'",]
+    replace_with_underscore = ['!!', ')', '(', ',', ' ', '.', ';']
+    rows = []
+    for row in unedited_rows:
+        row_dict = {}
+        for key, value in row.items():
+            for item in replace_with_none:
+                key = key.replace(item, '')
+            for item in replace_with_underscore:
+                key = key.replace(item, '_')
+            row_dict[key] = value
+        rows.append(row_dict)
+    columns = list(rows[0].keys())
 
+    # Create the database
+    create_db(username)
+    # Create the table
+    create_table(username, f'{username}_table')
+    # Add the columns
+    for column in columns:
+        add_column(username, f'{username}_table', column, 'TEXT')
+    # Insert the rows
+    for row in rows:
+        insert_row(username, f'{username}_table', row)
+    # Return the table results
+    return execute_query(
+        username, 
+        f'SELECT * FROM {username}_table;'
+    )

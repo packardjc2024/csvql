@@ -3,63 +3,85 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Portfolio</title>
-    <!-- Favicon -->
-    <!-- <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicon/apple-touch-icon.png' %}">
+    <title>CSVQL</title>
+        <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'favicon/apple-touch-icon.png' %}">
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon/favicon-32x32.png' %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon/favicon-16x16.png' %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon/android-chrome-192x192.png' %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon/android-chrome-512x512.png' %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'favicon/favicon.ico' %}">
-    <link rel="manifest" href="{% static 'favicon/site.webmanifest' %}"> -->
-    <!-- CSS and JS Files -->
-    <link rel="stylesheet" type=text/css href="{% static 'bootstrap.min.css' %}">
-    <script type="text/javascript" href="{% static 'bootstrap.js' %}"></script>
+    <link rel="manifest" href="{% static 'favicon/site.webmanifest' %}">
+    <!-- Bootstrap and JQuery-->
     <script type="text/javascript" src="{% static 'jquery.js' %}"></script>
+    <script type="text/javascript" href="{% static 'bootstrap.bundle.min.js' %}"></script>
+    <link rel="stylesheet" type=text/css href="{% static 'bootstrap.min.css' %}">
+    <!-- Project Specific File -->
     <link rel="stylesheet" type="text/css" href='{% static "main/main.css" %}'>
     <script type="text/javascript" src="{% static 'main/main.js' %}"></script>
 </head>
 
 <body>
-
-<header>
-</header>
-
 <main>
 
+    <!-- Navbar -->
+    <div class="top-navbar" id="top-navbar">
+        <!-- Left Side-->
+        <div class="top-navbar-left-side" id="left-navbar">
+            <img id="navbar-img" src="{% static 'site_pictures/pod_logo.png' %}" alt="Programming on Demand Logo">
+            <a class="navbar-text" href="#">CSVQL</a>
+        </div>
+        <!-- Right Side -->
+        <div class="top-navbar-right-side" id="right-navbar">
+            <a class="navbar-text" href="{% url 'account:logout_page' %}">Logout</a>
+        </div>
+    </div>
 
-<div class="table_container">
-    <form>
-    {% csrf_token %}
-        <table class="spreadsheet">
-            <tr>
-                <td class="table-header">ID</td>
-                {% for column in columns %}
-                <td>
-                    <input type="text" id="{{ column }}" value="{{ column }}" class="field table-header">
-                </td>
+    <!-- Tool Bar -->
+    <div class="toolbar">
+        <a class="toolbar-text" href="{% url 'main:delete' %}">Delete Table</a>
+        <a class="toolbar-text" href="{% url 'main:query' %}">SQL Query</a>
+        <a class="toolbar-text" href="{% url 'main:search' %}">Search Table</a>
+        <a class="toolbar-text" href="{% url 'main:export' %}">Export CSV</a>
+        <div class="file-import">
+            <form id="import-form" action="{% url 'main:import_csv' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <label for="import-csv" id="import-label">Import CSV</label>
+                <input type="file" id="import-csv" name="csv-file" accept=".csv">
+            </form>
+        </div>  
+    </div>
+
+
+    <!-- Spreadsheet -->  
+    <div class="table_container">
+        <form>
+        {% csrf_token %}
+            <table class="spreadsheet">
+                <tr>
+                    {% for column in columns %}
+                    <td>
+                        <input type="text" id="{{ column }}" value="{{ column }}" class="field table-header">
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% for row in rows %}
+                <tr id="{{ row.row_id }}" name="row_id" class="table-row row-id">
+                    {% for key, value in row.items %}
+                    <td>
+                        {% if value is None %}
+                        <input type="text" name="{{ key }}" class="field table-body" value="">
+                        {% else %}
+                        <input type="text" name="{{ key }}" class="field table-body" value="{{ value }}">
+                        {% endif %}
+                    </td>
+                    {% endfor %}
+                </tr>
                 {% endfor %}
-            </tr>
-            {% for row in rows %}
-            <tr id="{{ row }}" class="table-row">
-                <td>{{ row }}</td>
-                {% for column in columns %}
-                <td>
-                    <input type="text" name="{{ column }}" class="field table-body">
-                </td>
-                {% endfor %}
-            </tr>
-            {% endfor %}
-        </table>   
-    </form>
-</div>
-
-
+            </table>   
+        </form>
+    </div>
 
 </main>
-
-<footer>
-</footer>
-
 </body>
 </html>

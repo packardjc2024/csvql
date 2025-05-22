@@ -1,9 +1,7 @@
 // Add event listeners
 $(document).ready(function(){
     $('.field').on('change', updateRowField);
-    // $('#select_form').on('submit', selectQuery);
-    // $('#csv_file').on('change', submitFile);
-    // $('input[name="column_options"]').on('click', allColumns);
+    $('#import-csv').on('change', uploadFile);
 });
 
 
@@ -46,4 +44,11 @@ function updateRowField(){
             console.log('Unable to update field');
         }
     });
+}
+
+
+function uploadFile(event){
+    console.log('file upload triggered');
+    event.preventDefault();
+    $('#import-form').submit();
 }

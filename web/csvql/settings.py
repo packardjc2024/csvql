@@ -51,6 +51,8 @@ DEBUG = False
 USE_SRI = True
 SRI_ENABLED = True
 
+LOGIN_URL = '/account/'
+
 ALLOWED_HOSTS = [
     '*',
     '127.0.0.1',
@@ -70,6 +72,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'sri',
     'main',
+    'account',
 ]
 
 MIDDLEWARE = [
