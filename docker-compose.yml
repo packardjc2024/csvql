@@ -34,7 +34,7 @@ volumes:
   static_volume:
   media_volume:
   logs_volume:
-  dbs:
+  dbs_volume:
 
 networks:
   csvql_network:

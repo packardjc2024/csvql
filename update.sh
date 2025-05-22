@@ -32,7 +32,8 @@ sudo groupadd staticgroup
 sudo usermod -aG staticgroup www-data
 
 PATH_DIRECTORIES=(
-    '/var' '/var/lib' 
+    '/var' 
+    '/var/lib' 
     '/var/lib/docker' 
     '/var/lib/docker/volumes'
 )
@@ -40,6 +41,7 @@ VOLUME_DIRECTORIES=(
     "/var/lib/docker/volumes/${PROJECT_NAME}_static_volume" 
     "/var/lib/docker/volumes/${PROJECT_NAME}_media_volume" 
     "/var/lib/docker/volumes/${PROJECT_NAME}_logs_volume" 
+    "/var/lib/docker/volumes/${PROJECT_NAME}_dbs_volume"
 )
 
 for path_directory in ${PATH_DIRECTORIES[@]}; do
